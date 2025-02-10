@@ -2,9 +2,11 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./config/db");
-
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin:"*",
+    credentials:true
+}));
 app.use(express.json());
 
 const todoRoutes = require("./routes/todoRoutes");

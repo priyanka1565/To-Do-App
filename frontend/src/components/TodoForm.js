@@ -1,31 +1,40 @@
 import React, { useState } from "react";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Box } from "@mui/material";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TodoForm = ({ fetchTodos }) => {
-    const [task, setTask] = useState("");
+    const [taskName, setTaskName] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!task.trim()) return;
-        await axios.post("http://localhost:5000/api/todos", { task_name: task });
-        setTask("");
-        fetchTodos();
+        if (!taskName.trim()) return;
+        
+        try {
+            await axios.post("http://localhost:5000/api/todos/create_todos", { task_name: taskName });
+            setTaskName("");
+            fetchTodos();
+            toast.success("ToDo Added Succesfully!!!")
+        } catch (error) {
+            console.error("Error adding task:", error);
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px" }}>
-            <TextField
+        <div>
+            <ToastContainer/>
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", gap: 2, mb: 2 }}>
+            <TextField 
                 label="New Task"
-                variant="outlined"
+                value={taskName}
+                onChange={(e) => setTaskName(e.target.value)}
                 fullWidth
-                value={task}
-                onChange={(e) => setTask(e.target.value)}
+                required
             />
-            <Button type="submit" variant="contained" color="primary">
-                Add
-            </Button>
-        </form>
+            <Button type="submit" variant="contained" color="primary">Add ToDo</Button>
+        </Box>
+        </div>
     );
 };
 

@@ -8,7 +8,7 @@ const App = () => {
   const [todos, setTodos] = useState([]);
 
   const fetchTodos = async () => {
-    const { data } = await axios.get("http://localhost:5000/api/todos");
+    const { data } = await axios.get("http://localhost:5000/api/todos/get_all_todos");
     setTodos(data);
   };
 

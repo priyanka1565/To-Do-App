@@ -3,7 +3,7 @@ const Todo = require("../models/Todo");
 // Get all todos
 exports.getTodos = async (req, res) => {
     try {
-        const todos = await Todo.find();
+        const todos = await Todo.find().sort({ _id: -1 })
         res.json(todos);
     } catch (error) {
         res.status(500).json({ message: "Error fetching todos" });
@@ -23,16 +23,29 @@ exports.createTodo = async (req, res) => {
 };
 
 // Update a todo
+// Update a todo (task_name or completed)
 exports.updateTodo = async (req, res) => {
     try {
         const { id } = req.params;
-        const { completed } = req.body;
-        await Todo.findByIdAndUpdate(id, { completed });
-        res.json({ message: "Todo updated successfully" });
+        const { task_name, completed } = req.body; // Get task_name and completed from request body
+
+        // Find and update the todo
+        const updatedTodo = await Todo.findByIdAndUpdate(
+            id,
+            { task_name, completed },  // Update both fields
+            { new: true }  // Return the updated document
+        );
+
+        if (!updatedTodo) {
+            return res.status(404).json({ message: "Todo not found" });
+        }
+
+        res.json(updatedTodo);
     } catch (error) {
-        res.status(400).json({ message: "Error updating todo" });
+        res.status(400).json({ message: "Error updating todo", error });
     }
 };
+
 
 // Delete a todo
 exports.deleteTodo = async (req, res) => {
